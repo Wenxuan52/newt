@@ -7,15 +7,15 @@ from common import TASK_SET
 from common.vision_encoder import PretrainedEncoder
 
 RECOMPUTE = True  # Set to True to recompute features
+FILEDIR = "<path>/<to>/<dataset>"
 
 # Load encoder
 encoder = PretrainedEncoder()
 
-# for task in TASK_SET["metaworld"]:
 for task in TASK_SET['soup']:
 
     # Check whether features have already been computed
-    td_path = f"<path>/<to>/<dataset>/{task}.pt"
+    td_path = f"FILEDIR/{task}.pt"
     if os.path.exists(td_path):
         td = torch.load(td_path, weights_only=False)
         if 'feat' in td and not RECOMPUTE:
@@ -26,7 +26,7 @@ for task in TASK_SET['soup']:
     print('Encoding data for task:', task)
 
     i = 0
-    fp = lambda i: f"<path>/<to>/<dataset>/{task}-{i}.png"
+    fp = lambda i: f"{FILEDIR}/{task}-{i}.png"
     features = []
 
     while os.path.exists(fp(i)):
@@ -61,4 +61,4 @@ for task in TASK_SET['soup']:
     features = features[:td['obs'].shape[0]]  # Match number of observations
     print('Final feature shape:', features.shape)
     td['feat'] = features
-    torch.save(td, f"<path>/<to>/<dataset>/{task}.pt")
+    torch.save(td, f"{FILEDIR}/{task}.pt")

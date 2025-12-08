@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict
 import json
 
@@ -1552,5 +1553,7 @@ for task_name, task_info in TASKS.items():
 	task_info['text_embedding'] = text_embeddings.mean(dim=1).squeeze().cpu().numpy().tolist()
 
 # Save the task dictionary as a JSON file
-save_dict_as_json(TASKS, '<path>/<to>/tasks.json')
+FILEPATH = '<path>/<to>/tasks.json'  # specify your desired path here
+assert os.path.exists(os.path.dirname(FILEPATH)), f'Directory does not exist: {os.path.dirname(FILEPATH)}'
+save_dict_as_json(TASKS, FILEPATH)
 print(f'Saved task embeddings of dim {len(TASKS["walker-stand"]["text_embedding"])}.')

@@ -34,13 +34,55 @@ Newt is a language-conditioned multitask world model based on [TD-MPC2](https://
 
 ## Getting started
 
-We provide a `Dockerfile` for easy installation. You can build the docker image by running
+We provide three options for getting started with our codebase: (1) local installation using `conda`, (2) building a `docker` image using our provided `Dockerfile`, or (3) using our prebuilt `docker` image hosted on Docker Hub. Note however that option (3) may not always be available due to rate limits.
+
+First, we recommend downloading required ManiSkill assets from huggingface by running
+
+```
+wget https://huggingface.co/datasets/nicklashansen/mmbench/resolve/main/maniskill.tar.gz
+tar -xvf maniskill.tar.gz && mv .maniskill ~ && rm maniskill.tar.gz
+```
+
+which will create a `.maniskill` folder in your home directory. This is the default location where the ManiSkill environments look for assets. You can also specify a different location by setting the `MANISKILL_ASSET_DIR` environment variable.
+
+Then, choose one of the following installation options:
+
+### Option 1: Local installation with conda
+
+Most dependencies can be installed via `conda`. We provide an `environment.yml` file for easy installation. You can create a new conda environment and install all dependencies by running
+
+```
+conda env create -f docker/environment.yaml
+conda activate newt
+pip install --no-cache-dir 'ale_py==0.10'
+```
+
+Finally, we recommend setting the `MS_SKIP_ASSET_DOWNLOAD_PROMPT` environment variable to `1` to avoid prompts from ManiSkill about downloading assets during runtime (assuming you have already downloaded the assets as described above):
+
+```
+export MS_SKIP_ASSET_DOWNLOAD_PROMPT=1
+```
+
+
+### Option 2: Building a docker image
+
+We provide a `Dockerfile` for easy installation. You can build the docker image by first moving your downloaded `.maniskill` asset directory to `docker/.maniskill` and then running
 
 ```
 cd docker && docker build . -t <user>/newt:1.0.0
 ```
 
 This docker image contains all dependencies needed for running MMBench and Newt.
+
+### Option 3: Using a prebuilt docker image
+
+We provide a prebuilt docker image on Docker Hub that you can use directly without having to build the image yourself. You can pull the image by running
+
+```
+docker pull nicklashansen/newt:1.0.0
+```
+
+This option may not always be available due to Docker Hub rate limits, but can be a convenient way to get started quickly or for debugging purposes.
 
 ----
 
@@ -67,9 +109,11 @@ If you find our work useful, please consider citing our paper as follows:
 @misc{Hansen2025Newt,
 	title={Learning Massively Multitask World Models for Continuous Control}, 
 	author={Nicklas Hansen and Hao Su and Xiaolong Wang},
-	booktitle={Preprint},
-	url={https://www.nicklashansen.com/NewtWM},
-	year={2025}
+	year={2025},
+	eprint={2511.19584},
+	archivePrefix={arXiv},
+	primaryClass={cs.LG},
+	url={https://arxiv.org/abs/2511.19584}, 
 }
 ```
 
@@ -77,7 +121,7 @@ If you find our work useful, please consider citing our paper as follows:
 
 ## Contributing
 
-You are very welcome to contribute to this project, but please understand that we will not be able to respond to any pull requests or issues while the submission is under review. Feel free to open an issue or pull request if you have any suggestions or bug reports, but please review our [guidelines](CONTRIBUTING.md) first.
+You are very welcome to contribute to this project. Feel free to open an issue or pull request if you have any suggestions or bug reports, but please review our [guidelines](CONTRIBUTING.md) first. Our goal is to build a codebase that can easily be extended to new environments and tasks, and we would love to hear about your experience!
 
 ----
 

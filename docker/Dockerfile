@@ -35,8 +35,7 @@ SHELL ["/bin/bash", "-c"]
 RUN echo "cd /root" >> /root/.bashrc
 
 # pip packages
-RUN pip install --no-cache-dir \
-    'ale_py==0.10' gpustat
+RUN pip install --no-cache-dir 'ale_py==0.10'
 
 # download physx GPU binary via sapien
 RUN python -c "exec('import sapien.physx as physx;\ntry:\n  physx.enable_gpu()\nexcept:\n  pass;')"
