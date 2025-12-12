@@ -1,3 +1,4 @@
+import os
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,7 +24,6 @@ class Config:
 	obs: str = "state"										# observation type, one of ["state", "rgb"]
 	num_envs: int = 10										# number of parallel environments, overridden if task is "soup"
 	env_mode: str = "async"									# environment mode, one of ["async", "sync"]
-	tasks_fp: str = "<path>/<to>/tasks.json"				# path to task info and embeddings
 
 	# evaluation
 	checkpoint: Optional[str] = None						# path to model checkpoint for evaluation / finetuning
@@ -48,7 +48,7 @@ class Config:
 	buffer_size: int = 10_000_000							# replay buffer capacity
 	use_demos: bool = True									# whether to use demonstration data
 	demo_steps: int = 200_000								# number of pretraining steps on demonstration data
-	lr_schedule: Optional[str] = "warmup"					# learning rate schedule, one of [None, "warmup"]
+	lr_schedule: Optional[str] = None						# learning rate schedule, one of [None, "warmup"]
 	warmup_steps: int = 5_000								# number of warmup steps for lr schedule
 	seeding_coef: int = 5									# number of random rollouts (per env) to seed the buffer with
 	exp_name: str = "default"								# experiment name for logging
@@ -143,6 +143,8 @@ def parse_cfg(cfg):
 	cfg.bin_size = (cfg.vmax - cfg.vmin) / (cfg.num_bins-1)  # Bin size for discrete regression
 
 	# Model size
+	if not cfg.task == 'soup' and cfg.get('model_size', None) is None:
+		cfg.model_size = 'B'  # Default model size for single-task training (5M)
 	if cfg.get('model_size', None) is not None:
 		assert cfg.model_size in MODEL_SIZE.keys(), \
 			f'Invalid model size {cfg.model_size}. Must be one of {list(MODEL_SIZE.keys())}'
@@ -158,6 +160,7 @@ def parse_cfg(cfg):
 		cfg.num_envs = cfg.num_tasks
 		print(colored(f'Number of tasks in soup: {cfg.num_global_tasks}', 'green', attrs=['bold']))
 	else:
+		cfg.use_demos = False  # Disable demos for single-task training
 		cfg.task_dim = 0  # No task conditioning for single-task training
 	cfg.eval_freq = 20 * 500 * cfg.num_envs
 	cfg.save_freq = 5 * cfg.eval_freq
@@ -166,8 +169,15 @@ def parse_cfg(cfg):
 	if cfg.use_demos and cfg.checkpoint is None:
 		cfg.lr_schedule = "warmup"
 
+	# Check if save_video and env_mode are compatible
+	if cfg.save_video:
+		assert cfg.env_mode == "sync", "save_video is only compatible with env_mode 'sync'"
+
 	# Load task info and embeddings
-	with open(cfg.tasks_fp, "r") as f:
+	curr_dir = os.path.dirname(os.path.abspath(__file__))
+	tasks_fp = os.path.join(curr_dir, '..', 'tasks.json')
+	assert os.path.exists(tasks_fp), f'Task info file not found at {tasks_fp}'
+	with open(tasks_fp, "r") as f:
 		task_info = json.load(f)
 	cfg.task_embeddings = []
 	cfg.episode_lengths = []

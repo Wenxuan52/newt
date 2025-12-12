@@ -185,7 +185,8 @@ def api_model_conversion(target_state_dict, source_state_dict):
 	for key in ['_encoder.state.0.weight', 'module._encoder.state.0.weight']:
 		if key in target_state_dict and key in source_state_dict and \
 				target_state_dict[key].shape != source_state_dict[key].shape:
-			# rgb input in target but not in source, we should pad
+			# possible rgb input in target but not in source, we should pad
+			print('Warning: unexpected shape mismatch in encoder weights, attempting to pad source weights...')
 			pad = target_state_dict[key].shape[1] - source_state_dict[key].shape[1]
 			assert pad > 0, 'pad should be positive'
 			pad_tensor = torch.zeros(source_state_dict[key].shape[0], pad, device=source_state_dict[key].device)
