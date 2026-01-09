@@ -102,7 +102,25 @@ $ python train.py checkpoint=<path>/<to>/<checkpoint>.pt    # <-- resume trainin
 
 We recommend using default hyperparameters, including the default model size of 20M parameters (`model_size=L`) for multitask experiments. For single-task experiments we recommend `model_size=B`. See `config.py` for a full list of arguments.
 
-If you would like to load one of our provided model checkpoints, you can download them from our [Hugging Face Models page](https://huggingface.co/nicklashansen/newt) and specify the path to the checkpoint using the `checkpoint` argument. Multitask checkpoints use a `soup` prefix in the filename, and model size is also specified in the filename (`S=2M`, `B=5M`, `L=20M`, `XL=80M`). You will need to use `model_size=B` when loading single-task checkpoints. We are actively working on better support for model loading and finetuning, so check back soon for updates!
+
+### Loading model checkpoints
+
+A model checkpoint can be loaded from a local path specified by the `checkpoint` argument; this can be either a checkpoint saved during training or one of our provided model checkpoints.
+
+Our provided checkpoints can be downloaded in two ways: (1) manually navigating to our [Hugging Face Models page](https://huggingface.co/nicklashansen/newt) and downloading the desired checkpoint file, or (2) using the provided `download_checkpoints.py` script. To use the script, first make sure you have `huggingface_hub` installed:
+
+```
+$ pip install -U huggingface_hub
+```
+
+Once installed, you can download any (or all) of our provided model checkpoints by running one of the following commands:
+
+```
+$ python download_checkpoints.py --filename "walker-walk" cache_dir="./checkpoints"   # <-- download single checkpoint
+$ python download_checkpoints.py --all cache_dir="./checkpoints"   # <-- download all checkpoints
+```
+
+Multitask checkpoints use a `soup` prefix in the filename, and model size is also specified in the filename (`S=2M`, `B=5M`, `L=20M`, `XL=80M`). You will need to use `model_size=B` when loading single-task checkpoints. We are actively working on better support for model loading and finetuning, so check back soon for updates!
 
 ### Generating demonstrations
 
