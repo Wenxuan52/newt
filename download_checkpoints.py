@@ -73,7 +73,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--cache-dir",
         type=str,
-        default=None,
+        default="./checkpoints",
         help="Directory to cache the downloaded checkpoints.",
     )
     parser.add_argument(

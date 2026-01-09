@@ -116,8 +116,8 @@ $ pip install -U huggingface_hub
 Once installed, you can download any (or all) of our provided model checkpoints by running one of the following commands:
 
 ```
-$ python download_checkpoints.py --filename "walker-walk" cache_dir="./checkpoints"   # <-- download single checkpoint
-$ python download_checkpoints.py --all cache_dir="./checkpoints"   # <-- download all checkpoints
+$ python download_checkpoints.py --filename "walker-walk" --cache-dir="./checkpoints"   # <-- download single checkpoint
+$ python download_checkpoints.py --all --cache-dir="./checkpoints"   # <-- download all checkpoints
 ```
 
 Multitask checkpoints use a `soup` prefix in the filename, and model size is also specified in the filename (`S=2M`, `B=5M`, `L=20M`, `XL=80M`). You will need to use `model_size=B` when loading single-task checkpoints. We are actively working on better support for model loading and finetuning, so check back soon for updates!
@@ -131,6 +131,15 @@ $ python generate_demos.py task=walker-walk +num_demos=10 data_dir=<path>/<to>/<
 ```
 
 The script assumes that the agent used for generating demos is a single-task agent trained with default hyperparameters (e.g., any of our provided checkpoints).
+
+### Results
+
+We provide precomputed results for Newt and baselines in the `csv/` directory. For your convenience, we report normalized scores at three different levels of aggregation: `avg` (average across all 200 tasks), `by_domain` (average within each domain), and `by_task` (individual task scores). You can easily load these results using `pandas`:
+
+```python
+import pandas as pd
+results = pd.read_csv("./csv/newt/newt_avg.csv")  # <-- average score across all tasks
+```
 
 ----
 
