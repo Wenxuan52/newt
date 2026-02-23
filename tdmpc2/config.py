@@ -22,7 +22,7 @@ class Config:
 	# environment
 	task: str = "soup"										# "soup" for multitask, see tdmpc2/common/__init__.py for task list
 	obs: str = "state"										# observation type, one of ["state", "rgb"]
-	num_envs: int = 10										# number of parallel environments, overridden if task is "soup"
+	num_envs: int = 4										# number of parallel environments, overridden if task is "soup"
 	env_mode: str = "async"									# environment mode, one of ["async", "sync"]
 
 	# evaluation
@@ -30,7 +30,7 @@ class Config:
 	eval_episodes: int = 2									# number of evaluation episodes per parallel environment
 
 	# training
-	steps: int = 100_000_000								# total environment steps to train for
+	steps: int = 100_000								    # total environment steps to train for
 	batch_size: int = 1024									# effective batch size across all devices
 	utd: float = 0.075										# update-to-data ratio, i.e., model updates per environment step
 	reward_coef: float = 0.1								# coefficient for reward prediction loss
@@ -91,7 +91,7 @@ class Config:
 	# logging
 	wandb_project: str = "<project>"						# wandb project name
 	wandb_entity: str = "<user>"							# wandb entity (user) name
-	enable_wandb: bool = True								# whether to enable wandb logging
+	enable_wandb: bool = False								# whether to enable wandb logging
 
 	# misc
 	multiproc: bool = False									# whether to use multiple GPUs (will use all visible GPUs)
